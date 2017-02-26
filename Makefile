@@ -1,4 +1,5 @@
-TARGET="/usr/local/bin/gci"
+TARGET = "/usr/local/bin/gci"
+SHELL_LINT := $(shell command -v shellcheck 2> /dev/null)
 
 ifeq ($(shell uname -s),Darwin)
 	checksum = md5 -q $1 2>/dev/null
@@ -35,6 +36,15 @@ install: gci.sh
 checksum:
 	@echo $(gci_checksum)
 .PHONY: checksum
+
+
+lint:
+ifndef SHELL_LINT
+	@echo "command shellcheck not found, please install shellcheck first. More detail: https://github.com/koalaman/shellcheck"
+endif
+	@shellcheck ./gci.sh
+	@echo "Lint passed"
+.PHONY: lint
 
 remove:
 	$(ensure_same)
