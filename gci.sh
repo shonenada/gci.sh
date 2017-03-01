@@ -21,7 +21,7 @@ msg=$(head -1 $TMP_FILE)
 
 if [ -z "$msg" ]
 then
-    echo "Please enter commit message"
+    echo "No commit message, aborting commit."
     rm $TMP_FILE
     exit 1
 fi
