@@ -2,6 +2,8 @@
 
 set -e
 
+EDITOR=${EDITOR:-"vi"}
+
 TMP_FILE=".git-commit.diff"
 
 diff=$(git diff --staged | sed -e $'s/diff --git/\\\ndiff --git/g')
