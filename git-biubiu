@@ -1,0 +1,28 @@
+#!/bin/bash
+
+function git_remove_squash_merged_local_branch() {
+  local main_branch="main"
+  if [ "$(git checkout -q master 2>&1 >> /dev/null)" == "0" ];then
+      MAIN_BRANCH="master"
+  fi
+
+  git checkout -q ${main_branch} &&
+    git for-each-ref refs/heads/ "--format=%(refname:short)" |
+    while read branch; do
+      if [[ "${branch}" = "${main_branch}" ]]; then
+        continue
+      fi
+
+      ancestor=$(git merge-base ${main_branch} $branch)
+      if [[ $(git cherry ${main_branch} $(git commit-tree $(git rev-parse $branch^{tree}) -p $ancestor -m _)) == "-"* ]];then
+          if [[ "$1" != "dry-run" ]]; then
+            git branch -D $branch
+          else
+            echo $branch
+          fi
+      fi
+    done
+}
+
+git_remove_squash_merged_local_branch $1
+
